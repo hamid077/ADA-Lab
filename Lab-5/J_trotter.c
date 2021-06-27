@@ -1,73 +1,105 @@
-#include <stdio.h>
-#include <time.h>
-void sort(int a[],int,int);
-void merge(int a[],int,int,int,int);
- 
-int main()
+#include<stdio.h>
+int left_to_right=1;
+int right_to_left=0;
+
+int searcharr(int a[],int n, int mob)
 {
-	int a[1000],n,i;
-	int rand(void);
-	clock_t start,end;
-    double timetaken;
-	printf("Enter no of elements:");
-	scanf("%d",&n);
-	printf("Entering array of random elements:");
-	
+	int i;
 	for(i=0;i<n;i++)
-		a[i]=rand() % 2000 + 1;
-	printf("unsorted array\n");
-	for(i=0;i<n;i++)
-		printf("%d ",a[i]);
-		printf("\n\n");
-	start=clock();	
-	sort(a,0,n-1);
-	end=clock();
-	printf("\nSorted array is :");
-	for(i=0;i<n;i++)
-		printf("%d ",a[i]);
-		
-		timetaken=((double)(end-start))/CLOCKS_PER_SEC;
-    printf("\ntime taken = %f seconds",timetaken);
-		
+	{
+		if(a[i]==mob)
+		return i+1;
+	}
 	return 0;
 }
- 
-void sort(int a[],int low,int high)
+
+int getmobile(int a[], int dir[],int n)
 {
-	int mid;
-		
-	if(low<high)
+	int mob_prev=0,mob=0,i;
+	for(i=0;i<n;i++)
 	{
-		mid=(low+high)/2;
-		sort(a,low,mid);		
-		sort(a,mid+1,high);	
-		merge(a,low,mid,mid+1,high);
+		if(dir[a[i]-1]==right_to_left && i!=0)
+		{
+			if(a[i]>a[i-1]&&a[i]>mob_prev)
+			{
+				mob=a[i];
+				mob_prev=mob;
+			}
+		}
+		if(dir[a[i]-1]==left_to_right && i!=n-1)
+		{
+			if(a[i]>a[i+1]&&a[i]>mob_prev)
+			{
+				mob=a[i];
+				mob_prev=mob;
+			}
+		}
 	}
+	if(mob==0&&mob_prev==0)
+	return 0;
+	else
+	return mob;
 }
- 
-void merge(int a[],int low1,int high1,int low2,int high2)
+
+int printoneperm(int a[], int dir[],int n)
 {
-	int temp[1000];	
-	int i,j,k;
-	i=low1;	
-	j=low2;	
-	k=0;
-	
-	while(i<=high1 && j<=high2)	
+	int mob,pos,temp,i;
+	mob=getmobile(a,dir,n);
+	pos=searcharr(a,n,mob);
+	if(dir[a[pos-1]-1]==right_to_left)
 	{
-		if(a[i]<a[j])
-			temp[k++]=a[i++];
-		else
-			temp[k++]=a[j++];
+		temp=a[pos-1];
+		a[pos-1]=a[pos-2];
+		a[pos-2]=temp;
 	}
-	
-	while(i<=high1)	
-		temp[k++]=a[i++];
-		
-	while(j<=high2)	
-		temp[k++]=a[j++];
-		
-	
-	for(i=low1,j=0;i<=high2;i++,j++)
-		a[i]=temp[j];
+	else if(dir[a[pos-1]-1]==left_to_right)
+	{
+		temp=a[pos];
+		a[pos]=a[pos-1];
+		a[pos-1]=temp;
+	}
+	for(i=0;i<n;i++)
+	{
+		if(a[i]>mob)
+		{
+			if(dir[a[i]-1]==left_to_right)
+			dir[a[i]-1]=right_to_left;
+			else if(dir[a[i]-1]==right_to_left)
+			dir[a[i]-1]=left_to_right;
+		}
+	}
+	for(i=0;i<n;i++)
+	{
+		printf("%d",a[i]);
+	}
+	printf("   ");
+	return 0;
+}
+
+
+
+void printpermutaions(int n)
+{
+	int a[n],i;
+	int dir[n];
+	for(i=0;i<n;i++)
+	{
+		a[i]=i+1;
+		printf("%d",a[i]);
+	}
+	printf("  ");
+	for(i=0;i<n;i++)
+	dir[i]=right_to_left;
+	while(getmobile(a,dir,n)!=0)
+	printoneperm(a,dir,n);
+}
+
+void main()
+{
+	int n;
+	printf("Enter the number\n");
+	scanf("%d",&n);
+    printf("The Permutations are : \n");
+	printpermutaions(n);
+	printf("\n");
 }

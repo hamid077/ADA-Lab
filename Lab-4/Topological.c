@@ -11,6 +11,7 @@ sum+=a[i][j];
 indegre[j]=sum;
 }
 }
+
 void topology()
 {
 int i,u,v,t[10],s[10],top=-1,k=0;
@@ -32,10 +33,12 @@ if(indegre[v]==0) s[++top]=v;
 }
 }
 }
+
 printf("The topological Sequence is:\n");
 for(i=0;i<n;i++)
 printf("%d ",t[i]);
 }
+
 void main()
 {
 int i,j;
